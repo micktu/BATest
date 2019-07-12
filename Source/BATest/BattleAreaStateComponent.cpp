@@ -32,11 +32,6 @@ void UBattleAreaStateComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (ENetRole::ROLE_Authority == GetOwnerRole())
-    {
-        GameModeComponent = GetWorld()->GetAuthGameMode<ABATestGameMode>()->GetBattleAreaComponent();
-    }
-
     // Server doesn't actually need it atm.
     BattleAreaActor = GetWorld()->SpawnActor<ABattleArea>(BattleAreaClass, FVector::ZeroVector, FRotator::ZeroRotator);
 }
@@ -58,7 +53,7 @@ void UBattleAreaStateComponent::TickComponent(float DeltaTime, ELevelTick TickTy
             world->GetTimerManager().SetTimer(HealthCheckTimer, this, &UBattleAreaStateComponent::CheckPlayerHazard, 1.0f, true, 1.0f);
             OldStage = GameModeComponent->GetStage(CurrentStage);
             NewStage = GameModeComponent->GetStage(++CurrentStage);
-            NewStage.Center = FMath::RandPointInCircle(OldStage.Radius - NewStage.Radius);
+            NewStage.Center = GetNewCenter();
             SetState(EBattleAreaState::Waiting);
         }
         break;
@@ -80,7 +75,7 @@ void UBattleAreaStateComponent::TickComponent(float DeltaTime, ELevelTick TickTy
             if (++CurrentStage < GameModeComponent->NumStages())
             {
                 NewStage = GameModeComponent->GetStage(CurrentStage);
-                NewStage.Center = FMath::RandPointInCircle(OldStage.Radius - NewStage.Radius);
+                NewStage.Center = GetNewCenter();
                 SetState(EBattleAreaState::Waiting);
             }
             else

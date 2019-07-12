@@ -67,4 +67,6 @@ public:
     }
 
     FORCEINLINE FVector GetCurrentCenter() const { return BattleAreaActor->GetCenter(); }
+
+    FORCEINLINE FVector2D GetNewCenter() const { return OldStage.Center + FMath::RandPointInCircle(OldStage.Radius - NewStage.Radius); }
 };
